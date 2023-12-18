@@ -1,4 +1,4 @@
-package com.example.taskMicroservice;
+package com.ln.taskMicroservice;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
