@@ -92,10 +92,7 @@ public class TaskServiceImpl implements TaskService {
         Task savedEntity = taskRepository.save(TaskEntityMapper.INSTANCE.map(taskDTO));
         TaskDTO savedTask= TaskEntityMapper.INSTANCE.map(savedEntity);
 
-        executorService.submit(() -> processTask(savedTask));
-
-//        Thread taskProcessingThread = new Thread(() -> processTask(savedTask));
-//        taskProcessingThread.start();
+        executorService.submit(() -> processTask(savedTask)););
         return savedTask.getId();
     }
 }
