@@ -23,3 +23,5 @@ public class TaskDTO {
     private int progress;
     private TaskStatus status;
 }
+
+

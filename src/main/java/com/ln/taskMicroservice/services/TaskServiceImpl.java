@@ -3,6 +3,7 @@ package com.ln.taskMicroservice.services;
 import com.ln.taskMicroservice.entities.Task;
 import com.ln.taskMicroservice.mapper.TaskEntityMapper;
 import com.ln.taskMicroservice.model.TaskDTO;
+import com.ln.taskMicroservice.model.TaskRequest;
 import com.ln.taskMicroservice.model.TaskStatus;
 import com.ln.taskMicroservice.repositories.TaskRepository;
 import lombok.AllArgsConstructor;
@@ -10,12 +11,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.util.concurrent.ExecutorService;
+
 @Service
 @AllArgsConstructor
 public class TaskServiceImpl implements TaskService {
 
     @Autowired
     private TaskRepository taskRepository;
+
+    @Autowired
+    private ExecutorService executorService;
+
 
     @Async
     public void processTask(TaskDTO task) {
@@ -75,12 +82,20 @@ public class TaskServiceImpl implements TaskService {
         return TaskEntityMapper.INSTANCE.map(taskRepository.findById(id).orElse(null));
     }
 
-    public Long createTask(TaskDTO task) {
-        task.setStatus(TaskStatus.IN_PROGRESS);
-        Task savedTask = taskRepository.save(TaskEntityMapper.INSTANCE.map(task));
+    public Long createTask(TaskRequest taskRequest) {
+        TaskDTO taskDTO = TaskDTO.builder()
+                .input(taskRequest.getInput())
+                .pattern(taskRequest.getPattern())
+                .status(TaskStatus.IN_PROGRESS)
+                .build();
 
-        Thread taskProcessingThread = new Thread(() -> processTask(TaskEntityMapper.INSTANCE.map(savedTask)));
-        taskProcessingThread.start();
+        Task savedEntity = taskRepository.save(TaskEntityMapper.INSTANCE.map(taskDTO));
+        TaskDTO savedTask= TaskEntityMapper.INSTANCE.map(savedEntity);
+
+        executorService.submit(() -> processTask(savedTask));
+
+//        Thread taskProcessingThread = new Thread(() -> processTask(savedTask));
+//        taskProcessingThread.start();
         return savedTask.getId();
     }
 }

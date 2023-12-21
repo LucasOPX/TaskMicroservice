@@ -2,6 +2,7 @@ package com.ln.taskMicroservice.controllers;
 
 import com.ln.taskMicroservice.entities.Task;
 import com.ln.taskMicroservice.model.TaskDTO;
+import com.ln.taskMicroservice.model.TaskRequest;
 import com.ln.taskMicroservice.repositories.TaskRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,11 +28,11 @@ class TaskControllerTest {
     @Rollback
     @Test
     void createTask() {
-        TaskDTO taskDTO = TaskDTO.builder()
+        TaskRequest taskRequest = TaskRequest.builder()
                 .input("ABCD")
                 .pattern("BCD")
                 .build();
-        ResponseEntity<Long> taskIdResponseEntity = taskController.createTask(taskDTO);
+        ResponseEntity<Long> taskIdResponseEntity = taskController.createTask(taskRequest);
         assertThat(taskIdResponseEntity.getStatusCode()).isEqualTo(HttpStatusCode.valueOf(201));
 
         Long savedId = taskIdResponseEntity.getBody();
@@ -42,17 +43,18 @@ class TaskControllerTest {
     @Rollback
     @Test
     void testGetAllTasks() {
+
         Task testTask1 = new Task();
         testTask1.setInput("ABCD");
         testTask1.setPattern("BCD");
 
         Task testTask2 = new Task();
-        testTask1.setInput("ABCD");
-        testTask1.setPattern("BCD");
+        testTask2.setInput("ABCD");
+        testTask2.setPattern("BCD");
 
         Task testTask3 = new Task();
-        testTask1.setInput("ABCD");
-        testTask1.setPattern("BCD");
+        testTask3.setInput("ABCD");
+        testTask3.setPattern("BCD");
 
         List<Task> testTasks = List.of(testTask1, testTask2, testTask3);
         taskRepository.saveAll(testTasks);
@@ -60,6 +62,6 @@ class TaskControllerTest {
         ResponseEntity<Iterable<TaskDTO>> allTasks = taskController.getAllTasks();
         Iterable<TaskDTO> taskDTOs = allTasks.getBody();
         long size = StreamSupport.stream(taskDTOs.spliterator(), false).count();
-        assert(size == 3);
+        assertThat(size == 3);
     }
 }

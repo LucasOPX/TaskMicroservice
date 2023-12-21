@@ -1,6 +1,7 @@
 package com.ln.taskMicroservice.services;
 
 import com.ln.taskMicroservice.model.TaskDTO;
+import com.ln.taskMicroservice.model.TaskRequest;
 
 public interface TaskService {
 
@@ -10,6 +11,6 @@ public interface TaskService {
 
     TaskDTO getTaskById(Long id);
 
-    Long createTask(TaskDTO task);
+    Long createTask(TaskRequest task);
 
 }

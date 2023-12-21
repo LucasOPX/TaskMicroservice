@@ -1,9 +1,9 @@
 package com.ln.taskMicroservice.controllers;
 
 import com.ln.taskMicroservice.model.TaskDTO;
+import com.ln.taskMicroservice.model.TaskRequest;
 import com.ln.taskMicroservice.services.TaskService;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,7 +11,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequiredArgsConstructor
 @AllArgsConstructor
 @RequestMapping("/tasks")
 public class TaskController {
@@ -20,7 +19,7 @@ public class TaskController {
     private TaskService taskService;
 
     @PostMapping("/")
-    public ResponseEntity<Long> createTask(@RequestBody @Validated TaskDTO task) {
+    public ResponseEntity<Long> createTask(@RequestBody @Validated TaskRequest task) {
         Long taskId = taskService.createTask(task);
         return new ResponseEntity<>(taskId, HttpStatus.CREATED);
     }
